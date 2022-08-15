@@ -1,15 +1,13 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include "nlohmann/json.hpp"
 #include <fstream>
-
-
+#include "recursos/sha256.h"
+#include "recursos/JSON.hpp"
 #define color SetConsoleTextAttribute
 
 using namespace std;
-using json = nlohmann::json;
-
+using JSON = dnc::JSON;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
 
 void limpiar(){
@@ -19,16 +17,21 @@ void limpiar(){
 }
 
 void carga(){
-    ifstream dict_json1_read("db_juego.json");
-    json dict_json1 = json::parse(dict_json1_read);
+    string msg;
+    cout << "Escribe el mensaje:\n";
+	cin >> ws;
+	getline(cin, msg);
+	string nuevo = SHA256::cifrar(msg);
+	cout << "\nHash resultante: " << nuevo;
 
-    cout<<dict_json1;
-    getch();
+		// _getch();
+		// system("cls");
+	cout << "\n";
 
 }
 
 void menu(){
-    int numero=0;
+    int opcion=0;
     color(hConsole, 10);
     cout<<"          MENU              "<<endl;
     cout<<"****************************"<<endl;
@@ -39,8 +42,8 @@ void menu(){
     cout<<"*  5. Salir del juego      *"<<endl;
     cout<<"****************************"<<endl;
     cout<<"  Ingrese una opcion: ";
-    cin>>numero;
-    switch(numero) {
+    cin>>opcion;
+    switch(opcion) {
         case 1:
             carga();
             limpiar();
