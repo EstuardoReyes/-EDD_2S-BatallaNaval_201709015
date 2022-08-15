@@ -2,8 +2,11 @@
 #include <windows.h>
 #include <conio.h>
 #include <fstream>
+#include <string.h>
 #include "recursos/sha256.h"
 #include "recursos/JSON.hpp"
+#include "clases/lista_circular.h"
+
 #define color SetConsoleTextAttribute
 
 using namespace std;
@@ -17,17 +20,15 @@ void limpiar(){
 }
 
 void carga(){
+    /*
     string msg;
     cout << "Escribe el mensaje:\n";
 	cin >> ws;
 	getline(cin, msg);
-	string nuevo = SHA256::cifrar(msg);
+	string nuevo = SHA256::cifrar(msg);   //Sirve para encriptar la contraseña ahora solo falta decencriptar
 	cout << "\nHash resultante: " << nuevo;
-
-		// _getch();
-		// system("cls");
-	cout << "\n";
-
+	cout << "\n";*/
+    Lista lista;
 }
 
 void menu(){
