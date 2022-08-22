@@ -3,7 +3,7 @@
 #include <jsoncpp/json/json.h>
 
 
-using namespace std
+using namespace std;
 
 int main(){
     ifstream ifs("profile.json");
