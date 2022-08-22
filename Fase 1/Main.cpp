@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string.h>
 #include "recursos/sha256.h"
+#include "recursos/json/json.h"
 //#include "recursos/JSON.hpp"
 #define color SetConsoleTextAttribute
 using namespace std;
@@ -24,29 +25,28 @@ struct Articulo{
     string src;
 };
 
+struct Movimiento{
+    string mov_x;
+    string mov_y;
+}
+///////////////////////////////////////////////////////////////////// EMPIEZA LISTA ////////////////////////////////////////////////////////////////////////
+
 class Lista{
     private:
         class Nodo{
             public: 
                 Nodo *siguiente;
                 Articulo articulo;
+                Lista *lista;
+                string categoria;
         };
         Nodo *raiz;
         Nodo *ultimo;
-        class NodoC{
-            public: 
-                NodoC *siguiente;
-                Lista *lista;
-                string categoria;
-
-        };
-        NodoC *cabeza;
-        NodoC *cola;
     public:
         Lista();
         ~Lista();
         void insertarNodo(Articulo articulo);
-        void insertarNodoC(string categoria , Lista* lista);
+        void insertarNodoC(string categoria , Lista lista);
         bool vacia();
         void imprimir(); 
 };
@@ -102,8 +102,8 @@ void Lista::insertarNodo(Articulo articulo) {
     }
 }
 
-void Lista::insertarNodoC(string categoria, Lista* list) {
-    NodoC *nuevo = new NodoC();
+void Lista::insertarNodoC(string categoria, Lista list) {
+    Nodo *nuevo = new Nodo();
     nuevo -> categoria = categoria;
     nuevo -> lista = list;
     if (cola == NULL) 
@@ -122,7 +122,7 @@ void Lista::insertarNodoC(string categoria, Lista* list) {
 
 bool Lista::vacia()
 {
-    if (raiz == NULL or cabeza == NULL)
+    if (raiz == NULL)
         return true;
     else
         return false;
@@ -144,7 +144,7 @@ void Lista::imprimir()    /// esto  quiere revisar
         getch();
     }
 }*/
-
+//////////////////////////////////////////////////////////////////////// EMPIEZA LISTA CIRUCLAR ////////////////////////////////////////////////////////////////////////////
 class ListaCircular{
     private:
         class Nodo{
@@ -226,7 +226,158 @@ void ListaCircular::imprimir()
         getch();
     }
 }
+//////////////////////////////////////////////////////////////////////// EMPIEZA COLA //////////////////////////////////////////////////////////////////////////
 
+class Cola {
+private:
+    class Nodo {
+    public:
+        movimiento mov;
+        Nodo *sig;
+        string ancho;
+        string alto;
+    };
+    Nodo *raiz;
+    Nodo *ultimo:
+    public:
+        Cola();
+        ~Cola();
+        void encolar(Movimiento mov);
+        bool vacia();
+        void imprimir();
+        void descolar();
+};
+
+Cola::Cola(){
+    raiz = NULL;
+    ultimo = NULL;
+}
+
+Cola::~Cola(){
+    if (raiz != NULL) {
+        Nodo *reco = raiz->sig;
+        Nodo *bor;
+        while (reco != raiz)
+        {
+            bor = reco;
+            reco = reco->sig;
+            delete bor;
+        }
+        delete raiz;
+    }
+}
+
+void Cola::encolar(Movimiento mov) {
+    Nodo *nuevo = new Nodo();
+    nuevo->mov = mov;
+    if (raiz == NULL) {
+        raiz = nuevo;
+        ultimo = nuevo;
+    }
+    else{
+        ultimo->sig = nuevo;
+        nuevo->sig = NULL;
+        ultimo = nuevo;
+    }
+}
+
+bool Cola::vacia(){
+    if (raiz == NULL)
+        return true;
+    else
+        return false;
+}
+
+void Cola::imprimir(){
+    if (!vacia()) {
+        Nodo *reco = raiz;
+        do {
+         //   cout<<reco->info  <<"-";     modificar
+            reco = reco->sig;
+        } while (reco != NULL);
+    }
+}
+
+void Cola::descolar(){
+    raiz = raiz->sig;    
+}
+
+/////////////////////////////////////////////////////////////////////////// EMPIEZA PILA /////////////////////////////////////////////////////////////////
+
+class Pila{
+private:
+    class Nodo {
+        public:
+            Nodo *abajo;
+       
+    };
+    Nodo *cima;
+    public:
+    Pila();
+    ~Pila();
+    void push();
+    bool vacia();
+    void imprimir();
+    void pop();
+};
+
+Pila::Pila(){
+    cima = NULL;
+   
+}
+
+Pila::~Pila(){
+    if (cima != NULL) {
+        Nodo *reco = cima->abajo;
+        Nodo *bor;
+        while (reco != NULL)
+        {
+            bor = reco;
+            reco = reco->abajo;
+            delete bor;
+        }
+        delete cima;
+    }
+}
+
+void Pila::push() {
+    Nodo *nuevo = new Nodo();
+    nuevo->mov = mov;
+    if (raiz == NULL) {
+        raiz = nuevo;
+        ultimo = nuevo;
+    }
+    else{
+        ultimo->sig = nuevo;
+        nuevo->sig = NULL;
+        ultimo = nuevo;
+    }
+}
+
+bool Pila::vacia(){
+    if (raiz == NULL)
+        return true;
+    else
+        return false;
+}
+
+void Pila::imprimir(){
+    if (!vacia()) {
+        Nodo *reco = raiz;
+        do {
+         //   cout<<reco->info  <<"-";     modificar
+            reco = reco->sig;
+        } while (reco != NULL);
+    }
+}
+
+void Pila::descolar(){
+
+    cima = cima->abajo;    
+}
+
+
+////////////////////////////////////////////////////////////////////////// FUNCIONES /////////////////////////////////////////////////////////////////////
 void carga();
 
 void limpiar();
@@ -259,12 +410,12 @@ void carga(){
     //usuario user("tato","tato961122",25,300);
     ListaCircular *lc = new ListaCircular();
     Usuario us,no;
-    us.edad = 25;
-    us.moneda = 200;
+    us.edad = "25";
+    us.moneda = "200";
     us.nick = "tato961122";
     us.password = "4234f" ;
-    no.edad = 24;
-    no.moneda = 240;
+    no.edad = "24";
+    no.moneda = "240";
     no.nick = "fdfdf";
     no.password = "fsf";
     lc->insertarNodo(no);
