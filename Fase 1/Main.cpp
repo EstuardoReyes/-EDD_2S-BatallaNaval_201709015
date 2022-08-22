@@ -1,15 +1,14 @@
 #include <iostream>
-#include <windows.h>
-#include <conio.h>
 #include <stdlib.h>
 #include <fstream>
-#include <string.h>
+#include <string>
 #include "recursos/sha256.h"
-#include "json/json.h"
+#include <jsoncpp/json/json.h>
 
 
 #define color SetConsoleTextAttribute
 using namespace std;
+using namespace Json;
 
 struct Usuario{
     string nick;
@@ -47,15 +46,12 @@ class Lista{
         Lista();
         ~Lista();
         void insertarNodo(Articulo articulo);
-        void insertarNodoC(string categoria , Lista lista);
         bool vacia();
         void imprimir(); 
 };
 
 Lista::Lista(){
     raiz = NULL;
-    cabeza = NULL;
-    cola = NULL;
     ultimo = NULL;
 
 }
@@ -73,17 +69,6 @@ Lista::~Lista()     //sirve para destruir la lista circular con todos sus nodos
         }
         delete raiz;
     }
-    if (cabeza != NULL) {
-        NodoC *reco = cabeza->siguiente;
-        NodoC *bor;
-        while (reco != cabeza)
-        {
-            bor = reco;
-            reco = reco->siguiente;
-            delete bor;
-        }
-        delete cabeza;
-    }
 }
 
 void Lista::insertarNodo(Articulo articulo) {
@@ -100,24 +85,6 @@ void Lista::insertarNodo(Articulo articulo) {
         ultimo->siguiente = nuevo;
         nuevo->siguiente = NULL;
         ultimo = nuevo;
-    }
-}
-
-void Lista::insertarNodoC(string categoria, Lista list) {
-    Nodo *nuevo = new Nodo();
-    nuevo -> categoria = categoria;
-    nuevo -> lista = list;
-    if (cola == NULL) 
-    {
-        cola = nuevo;
-        cabeza = nuevo;
-
-    }
-    else 
-    {
-        cola->siguiente = nuevo;
-        nuevo->siguiente = NULL;
-        cola = nuevo;
     }
 }
 
@@ -217,6 +184,8 @@ void ListaCircular::imprimir()
         Nodo *reco = raiz;
         do {
             cout<<reco->dato.nick<<endl;
+            cout<<reco->dato.password<<endl;
+            cout<<reco->dato.edad<<endl;
             cout<<reco->dato.moneda<<endl;
             reco = reco->siguiente;
         } while (reco != raiz);
@@ -224,7 +193,8 @@ void ListaCircular::imprimir()
     }
     else{
         cout<<"No existen elementos en la lista"<<endl;
-        getch();
+        string t;
+        cin>>t;
     }
 }
 //////////////////////////////////////////////////////////////////////// EMPIEZA COLA //////////////////////////////////////////////////////////////////////////
@@ -233,13 +203,13 @@ class Cola {
 private:
     class Nodo {
     public:
-        movimiento mov;
+        Movimiento mov;
         Nodo *sig;
         string ancho;
         string alto;
     };
     Nodo *raiz;
-    Nodo *ultimo:
+    Nodo *ultimo;
     public:
         Cola();
         ~Cola();
@@ -310,13 +280,14 @@ private:
     class Nodo {
         public:
             Nodo *abajo;
+            Movimiento *dato;
        
     };
     Nodo *cima;
     public:
     Pila();
     ~Pila();
-    void push();
+    void push(Movimiento *mov);
     bool vacia();
     void imprimir();
     void pop();
@@ -341,22 +312,20 @@ Pila::~Pila(){
     }
 }
 
-void Pila::push() {
+void Pila::push(Movimiento *mov) {
     Nodo *nuevo = new Nodo();
-    nuevo->mov = mov;
-    if (raiz == NULL) {
-        raiz = nuevo;
-        ultimo = nuevo;
+    nuevo->dato = mov;
+    if (cima == NULL) {
+        cima = nuevo;
     }
     else{
-        ultimo->sig = nuevo;
-        nuevo->sig = NULL;
-        ultimo = nuevo;
+        nuevo->abajo = cima;
+        cima = nuevo;
     }
 }
 
 bool Pila::vacia(){
-    if (raiz == NULL)
+    if (cima == NULL)
         return true;
     else
         return false;
@@ -364,16 +333,15 @@ bool Pila::vacia(){
 
 void Pila::imprimir(){
     if (!vacia()) {
-        Nodo *reco = raiz;
+        Nodo *reco = cima;
         do {
          //   cout<<reco->info  <<"-";     modificar
-            reco = reco->sig;
+            reco = reco->abajo;
         } while (reco != NULL);
     }
 }
 
-void Pila::descolar(){
-
+void Pila::pop(){
     cima = cima->abajo;    
 }
 
@@ -383,9 +351,14 @@ void carga();
 
 void limpiar();
 
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
+//HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
 
 void menu();
+
+//variables globales
+ListaCircular *lc = new ListaCircular();
+
+
 
 int main() {
     menu();
@@ -409,20 +382,49 @@ void carga(){
 	cout << "\nHash resultante: " << nuevo;
 	cout << "\n";*/
     //usuario user("tato","tato961122",25,300);
-    ListaCircular *lc = new ListaCircular();
-    Usuario us,no;
-    us.edad = "25";
-    us.moneda = "200";
-    us.nick = "tato961122";
-    us.password = "4234f" ;
-    no.edad = "24";
-    no.moneda = "240";
-    no.nick = "fdfdf";
-    no.password = "fsf";
-    lc->insertarNodo(no);
-    lc->insertarNodo(us);
+    //cout<<"Ingrese nombre del archivo: "<<endl;
+    //string msg,t;
+    //cin>>ws;
+    //getline(cin,msg);
+    //msg = msg +".json";
+    fstream ofile("db_juego.json");
+    string strjson;
+    if (!ofile.is_open()) {
+        cout<<"Imposible abrir ese archivo"<<endl;
+        string t;
+        cin>>t;
+    }
+    string strline;
+    while (getline(ofile, strline)) {
+        strjson += strline;
+    }
+    ofile.close();
+
+    Json::Reader reader;  //  Reader 
+    Json::Value root; 
+
+    if (reader.parse(strjson, root)) {
+  
+    
+    //cout<<root["usuarios"];
+    Json::Value to = root["usuarios"];
+    int size = root["usuarios"].size();
+    string t;
+   
+    for (int j = 0; j < size; j++){
+        Usuario a;
+        a.nick = to[j]["nick"].asString();
+        a.moneda = to[j]["moneda"].asString();
+        a.edad = to[j]["edad"].asString();
+        a.password = to[j]["password"].asString();
+        lc->insertarNodo(a);
+    }
     lc->imprimir();
-    getch();
+    cin>>t;
+  
+  }
+
+  
     
 
 
@@ -430,7 +432,7 @@ void carga(){
 
 void menu(){
     int opcion=0;
-    color(hConsole, 10);
+    //color(hConsole, 10);
     cout<<"          MENU              "<<endl;
     cout<<"****************************"<<endl;
     cout<<"*  1. Carga Masiva         *"<<endl;
@@ -457,14 +459,15 @@ void menu(){
             cout<<"opcion2"<<endl;
         break;
         case 5:
-            color(hConsole,9);
+            //color(hConsole,9);
             cout<<"  Adios"<<endl;
-            getch();
+            
         break;
         default:
-        color(hConsole,14);
+        //color(hConsole,14);
         cout<<"Por favor ingrese una opcion valida"<<endl;
-        getch();
+        string t;
+        cin>>t;       
         limpiar();
         menu();
       
