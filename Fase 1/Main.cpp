@@ -5,8 +5,9 @@
 #include <fstream>
 #include <string.h>
 #include "recursos/sha256.h"
-#include "recursos/json/json.h"
-//#include "recursos/JSON.hpp"
+#include "json/json.h"
+
+
 #define color SetConsoleTextAttribute
 using namespace std;
 
@@ -28,7 +29,7 @@ struct Articulo{
 struct Movimiento{
     string mov_x;
     string mov_y;
-}
+};
 ///////////////////////////////////////////////////////////////////// EMPIEZA LISTA ////////////////////////////////////////////////////////////////////////
 
 class Lista{
