@@ -41,20 +41,49 @@ class Lista{
                 string categoria;
         };
         Nodo *raiz;
-        Nodo *ultimo;
+       
     public:
         Lista();
         ~Lista();
         void insertarNodo(Articulo articulo);
+        void insertar(Articulo articulo);
         bool vacia();
         void imprimir(); 
+        bool buscar(string categoria);
+        Lista buscarNodo(string categoria);
 };
 
 Lista::Lista(){
     raiz = NULL;
-    ultimo = NULL;
-
 }
+
+bool Lista::buscar(string categoria){
+    Nodo *reco = raiz;
+    do {
+        if (reco->categoria == categoria){
+            return true;
+        }
+        reco = reco->siguiente;
+    } while (reco != raiz);
+    return false;
+    
+}
+
+Lista Lista::buscarNodo(string categoria){
+    Nodo *reco = raiz;
+    Lista gas;
+    do {
+        if (reco->categoria == categoria){
+            gas = *reco->lista;
+            return gas;
+        }
+        reco = reco->siguiente;
+    } while (reco != raiz);
+
+    return gas;
+    
+}
+
 
 Lista::~Lista()     //sirve para destruir la lista circular con todos sus nodos
 { 
@@ -74,17 +103,54 @@ Lista::~Lista()     //sirve para destruir la lista circular con todos sus nodos
 void Lista::insertarNodo(Articulo articulo) {
     Nodo *nuevo = new Nodo();
     nuevo->articulo = articulo;
-    if (raiz == NULL) 
-    {
-        ultimo = nuevo;
+    if (raiz == NULL){
         raiz = nuevo;
-
-    }
-    else 
-    {
-        ultimo->siguiente = nuevo;
+        nuevo->articulo = articulo;
         nuevo->siguiente = NULL;
-        ultimo = nuevo;
+    }
+    else{
+        Nodo *reco = raiz;
+       
+        while (reco->siguiente != raiz){
+            reco = reco->siguiente;
+        }
+        reco->siguiente = nuevo;
+        nuevo->siguiente = NULL;
+        nuevo->articulo = articulo;
+    }
+   
+   
+}
+/*sirve para insertar las cabezas pricipañes en la lista principañ de objetos*/
+void Lista::insertar(Articulo articulo) {
+    cout<<"entro"<<endl;
+    Nodo *nuevo = new Nodo();
+    if (raiz == NULL){
+        raiz = nuevo;
+        raiz->categoria=articulo.categoria;
+        Lista *lis = new Lista();
+        raiz->lista = lis;
+        raiz->siguiente = NULL;
+        raiz->lista->insertarNodo(articulo);
+    }
+    else{
+        
+        if (buscar(articulo.categoria) == true){
+          
+            Lista lisaux = buscarNodo(articulo.categoria);
+            lisaux.insertarNodo(articulo);
+        }
+        else{
+            
+            Lista *lis = new Lista();
+            Nodo *reco = raiz;
+            while (reco->siguiente != NULL){
+                reco = reco->siguiente;
+            }
+            reco->siguiente = nuevo;
+            nuevo->lista = lis;
+            nuevo->categoria = articulo.categoria;
+        }
     }
 }
 
@@ -95,23 +161,22 @@ bool Lista::vacia()
     else
         return false;
 }
-/*
+
 void Lista::imprimir()    /// esto  quiere revisar
 {
     if (!vacia()) {
         Nodo *reco = raiz;
         do {
-            cout<<reco->dato.nick<<endl;
-            cout<<reco->dato.moneda<<endl;
+            cout<<reco->categoria<<endl;
             reco = reco->siguiente;
-        } while (reco != raiz);
+        } while (reco->siguiente != raiz);
         
     }
     else{
         cout<<"No existen elementos en la lista"<<endl;
-        getch();
+       
     }
-}*/
+}
 //////////////////////////////////////////////////////////////////////// EMPIEZA LISTA CIRUCLAR ////////////////////////////////////////////////////////////////////////////
 class ListaCircular{
     private:
@@ -356,7 +421,8 @@ void limpiar();
 void menu();
 
 //variables globales
-ListaCircular *lc = new ListaCircular();
+ListaCircular *l_usuarios = new ListaCircular();
+Lista *l_articulos = new Lista(); 
 
 
 
@@ -417,10 +483,21 @@ void carga(){
         a.moneda = to[j]["moneda"].asString();
         a.edad = to[j]["edad"].asString();
         a.password = to[j]["password"].asString();
-        lc->insertarNodo(a);
+        l_usuarios->insertarNodo(a);
     }
-    lc->imprimir();
-    cin>>t;
+    to = root["articulos"];
+    size = root["articulos"].size();
+    for (int j = 0; j < size; j++){
+        Articulo a;
+        a.id = to[j]["id"].asString();
+        a.categoria = to[j]["categoria"].asString();
+        a.precio= to[j]["precio"].asString();
+        a.nombre = to[j]["nombre"].asString();
+        a.src = to[j]["src"].asString();
+        l_articulos->insertar(a);
+        cout<<"se ingreso objeto: "<<a.categoria<<endl;
+    }
+    l_usuarios->imprimir();
   
   }
 

@@ -4,7 +4,11 @@
         {"nick":"omar123", "password": "4324", "moneda":"40","edad":"45"}
     ],
     "articulos": [
-        {"id": "1", "categoria": "comida", "precio": "10", "nombre": "coca-cola", "src": ""}
+        {"id": "1", "categoria": "epico", "precio": "10", "nombre": "pico de diamante", "src": ""},
+        {"id": "2", "categoria": "legendario", "precio": "10", "nombre": "awp50", "src": ""},
+        {"id": "3", "categoria": "raro", "precio": "10", "nombre": "escopeta", "src": ""},
+        {"id": "4", "categoria": "normal", "precio": "10", "nombre": "pistola", "src": ""},
+        {"id": "5", "categoria": "legendario", "precio": "10", "nombre": "misiles", "src": ""}
     ],
     "tutorial":{
         "ancho":"",
