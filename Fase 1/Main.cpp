@@ -29,6 +29,8 @@ struct Articulo{
 struct Movimiento{
     string mov_x;
     string mov_y;
+    string ancho;
+    string alto;
 };
 ///////////////////////////////////////////////////////////////////// EMPIEZA LISTA ////////////////////////////////////////////////////////////////////////
 
@@ -55,8 +57,6 @@ class Lista{
 Lista::Lista(){
     raiz = NULL;
 }
-
-
 
 Lista::~Lista()     //sirve para destruir la lista circular con todos sus nodos
 { 
@@ -96,7 +96,6 @@ void Lista::insertarNodo(Articulo articulo) {
 }
 /*sirve para insertar las cabezas pricipañes en la lista principañ de objetos*/
 void Lista::insertar(Articulo articulo) {
-    cout<<"entro"<<endl;
     Nodo *nuevo = new Nodo();
     Nodo *reco;
     if (raiz == NULL){
@@ -108,14 +107,8 @@ void Lista::insertar(Articulo articulo) {
         nuevo->lista->insertarNodo(articulo);
     }
     else{
-        cout<<"ho"<<endl;
         bool encontrado = false;
-        reco = raiz;
-        cout<<reco->categoria<<endl;
-        cout<<reco->siguiente<<endl;
-        cout<<reco->lista->raiz->articulo.nombre<<endl;
-        while (reco != NULL){
-            cout<<"1"<<endl;
+        reco = raiz; while (reco != NULL){
         if (reco->categoria == articulo.categoria){
             encontrado = true;
         }
@@ -125,9 +118,7 @@ void Lista::insertar(Articulo articulo) {
             Lista *lisaux = new Lista();
             reco = raiz;
             while (reco != NULL){
-                cout<<"2"<<endl;
             if (reco->categoria == articulo.categoria){
-            cout<<"Ingreso al if"<<endl;
             lisaux = reco->lista;     
             }
             reco = reco->siguiente;
@@ -135,7 +126,6 @@ void Lista::insertar(Articulo articulo) {
         lisaux->insertarNodo(articulo);
         }
         else{
-            cout<<"false"<<endl;
             Lista *lis = new Lista();
             Nodo *reco = raiz;
             while (reco->siguiente != NULL){
@@ -162,10 +152,15 @@ void Lista::imprimir()    /// esto  quiere revisar
     if (!vacia()) {
         Nodo *reco = raiz;
         do {
-            cout<<reco->articulo.nombre<<endl;
+            cout<<endl;
+            cout<<"Categoria: "<<reco->categoria<<endl;
+            Nodo *aux = reco->lista->raiz;
+            while(aux != NULL ){
+                cout<<aux->articulo.id<<" "<<aux->articulo.categoria<<" "<<aux->articulo.nombre<<" "<<aux->articulo.precio<<" "<<aux->articulo.src<<endl;
+                aux = aux->siguiente;
+            }
             reco = reco->siguiente;
-        } while (reco->siguiente != raiz);
-        
+        } while (reco->siguiente != NULL);
     }
     else{
         cout<<"No existen elementos en la lista"<<endl;
@@ -265,8 +260,7 @@ private:
     public:
         Movimiento mov;
         Nodo *sig;
-        string ancho;
-        string alto;
+        
     };
     Nodo *raiz;
     Nodo *ultimo;
@@ -322,8 +316,10 @@ bool Cola::vacia(){
 void Cola::imprimir(){
     if (!vacia()) {
         Nodo *reco = raiz;
+        cout<<"Ancho: "<<raiz->mov.ancho<<endl;
+        cout<<"Alto: "<<raiz->mov.alto<<endl;
         do {
-         //   cout<<reco->info  <<"-";     modificar
+            cout<<"x: "<<reco->mov.mov_x<<" y: "<<reco->mov.mov_y<<endl;
             reco = reco->sig;
         } while (reco != NULL);
     }
@@ -411,6 +407,7 @@ void carga();
 
 void limpiar();
 
+void registrar();
 //HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
 
 void menu();
@@ -418,6 +415,7 @@ void menu();
 //variables globales
 ListaCircular *l_usuarios = new ListaCircular();
 Lista *l_articulos = new Lista(); 
+Cola *c_tutorial = new Cola();
 
 
 
@@ -434,15 +432,8 @@ void limpiar(){
 }
 
 void carga(){
-    /*
-    string msg;
-    cout << "Escribe el mensaje:\n";
-	cin >> ws;
-	getline(cin, msg);
-	string nuevo = SHA256::cifrar(msg);   //Sirve para encriptar la contraseña ahora solo falta decencriptar
-	cout << "\nHash resultante: " << nuevo;
-	cout << "\n";*/
-    //usuario user("tato","tato961122",25,300);
+    
+  
     //cout<<"Ingrese nombre del archivo: "<<endl;
     //string msg,t;
     //cin>>ws;
@@ -466,8 +457,6 @@ void carga(){
 
     if (reader.parse(strjson, root)) {
   
-    
-    //cout<<root["usuarios"];
     Json::Value to = root["usuarios"];
     int size = root["usuarios"].size();
     string t;
@@ -490,15 +479,53 @@ void carga(){
         a.nombre = to[j]["nombre"].asString();
         a.src = to[j]["src"].asString();
         l_articulos->insertar(a);
-        cout<<"se ingreso objeto: "<<a.categoria<<endl;
+        
     } 
-
-    cin>>t;
-  
+    to = root["tutorial"];
+    size = root["tutorial"]["movimientos"].size();
+    string alto = to["alto"].asString();
+    string ancho = to["ancho"].asString();
+    to = to["movimientos"];
+    for (int j=0; j<size; j++ ){
+        Movimiento moviento;
+        moviento.alto = alto;
+        moviento.ancho = ancho;
+        moviento.mov_x = to[j]["x"].asString();
+        moviento.mov_y = to[j]["y"].asString();
+        c_tutorial->encolar(moviento);
+    }  
   }
 
   
     
+
+
+}
+
+
+void registrar(){
+    
+    
+    string nombre,pass,edad,t;
+    cout<<"Ingrese nombre de usuario: ";
+    cin>>ws;
+    getline(cin,nombre);
+    cout<<"Ingrese su contraseña: ";
+    cin>>ws;
+    getline(cin,pass);
+    string nuevo = SHA256::cifrar(pass); 
+    cout<<"Ingrese su edad: ";
+    cin>>ws;
+    getline(cin,edad);
+    string moneda = "0";
+    Usuario us ;
+    us.password = nuevo;
+    us.moneda = moneda;
+    us.nick = nombre;
+    us.edad = edad;
+    l_usuarios->insertarNodo(us);
+    l_usuarios->imprimir();
+    cin>>t;
 
 
 }
@@ -523,7 +550,9 @@ void menu(){
             menu();
         break;
         case 2:
-            cout<<"opcion2"<<endl;
+            registrar();
+            limpiar();
+            menu();
         break;
         case 3:
             cout<<"opcion2"<<endl;

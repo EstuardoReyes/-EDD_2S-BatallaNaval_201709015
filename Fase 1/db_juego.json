@@ -1,7 +1,7 @@
 {
     "usuarios":[
-        {"nick": "tato961122", "password": "1234", "moneda": "30000", "edad": "25"},
-        {"nick":"omar123", "password": "4324", "moneda":"40","edad":"45"}
+        {"nick": "tato961122", "password": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5", "moneda": "30000", "edad": "25"},
+        {"nick":"omar123", "password": "f628421129af20c80d472e7a3eda41f794aae8c9b9afc005c911ec9e6eeb0b67", "moneda":"40","edad":"45"}
     ],
     "articulos": [
         {"id": "1", "categoria": "epico", "precio": "10", "nombre": "pico de diamante", "src": ""},
@@ -11,10 +11,15 @@
         {"id": "5", "categoria": "legendario", "precio": "10", "nombre": "misiles", "src": ""}
     ],
     "tutorial":{
-        "ancho":"",
-        "alto":"",
+        "ancho":"30",
+        "alto":"15",
         "movimientos":[
-            {"x":"","y":""}
+            {"x":"3","y":"9"},
+            {"x":"4","y":"2"},
+            {"x":"6","y":"6"},
+            {"x":"4","y":"7"},
+            {"x":"6","y":"10"}
+
         ]
     }
 }
