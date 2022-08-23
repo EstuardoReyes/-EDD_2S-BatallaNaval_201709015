@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <string>
+#include <string.h>
 #include "recursos/sha256.h"
 #include <jsoncpp/json/json.h>
 
@@ -49,40 +50,12 @@ class Lista{
         void insertar(Articulo articulo);
         bool vacia();
         void imprimir(); 
-        bool buscar(string categoria);
-        Lista buscarNodo(string categoria);
 };
 
 Lista::Lista(){
     raiz = NULL;
 }
 
-bool Lista::buscar(string categoria){
-    Nodo *reco = raiz;
-    do {
-        if (reco->categoria == categoria){
-            return true;
-        }
-        reco = reco->siguiente;
-    } while (reco != raiz);
-    return false;
-    
-}
-
-Lista Lista::buscarNodo(string categoria){
-    Nodo *reco = raiz;
-    Lista gas;
-    do {
-        if (reco->categoria == categoria){
-            gas = *reco->lista;
-            return gas;
-        }
-        reco = reco->siguiente;
-    } while (reco != raiz);
-
-    return gas;
-    
-}
 
 
 Lista::~Lista()     //sirve para destruir la lista circular con todos sus nodos
@@ -111,7 +84,7 @@ void Lista::insertarNodo(Articulo articulo) {
     else{
         Nodo *reco = raiz;
        
-        while (reco->siguiente != raiz){
+        while (reco->siguiente != NULL){
             reco = reco->siguiente;
         }
         reco->siguiente = nuevo;
@@ -125,23 +98,44 @@ void Lista::insertarNodo(Articulo articulo) {
 void Lista::insertar(Articulo articulo) {
     cout<<"entro"<<endl;
     Nodo *nuevo = new Nodo();
+    Nodo *reco;
     if (raiz == NULL){
         raiz = nuevo;
         raiz->categoria=articulo.categoria;
         Lista *lis = new Lista();
-        raiz->lista = lis;
-        raiz->siguiente = NULL;
-        raiz->lista->insertarNodo(articulo);
+        nuevo->lista = lis;
+        nuevo->siguiente = NULL;
+        nuevo->lista->insertarNodo(articulo);
     }
     else{
-        
-        if (buscar(articulo.categoria) == true){
-          
-            Lista lisaux = buscarNodo(articulo.categoria);
-            lisaux.insertarNodo(articulo);
+        cout<<"ho"<<endl;
+        bool encontrado = false;
+        reco = raiz;
+        cout<<reco->categoria<<endl;
+        cout<<reco->siguiente<<endl;
+        cout<<reco->lista->raiz->articulo.nombre<<endl;
+        while (reco != NULL){
+            cout<<"1"<<endl;
+        if (reco->categoria == articulo.categoria){
+            encontrado = true;
+        }
+        reco = reco->siguiente;
+        } 
+        if (encontrado == true){
+            Lista *lisaux = new Lista();
+            reco = raiz;
+            while (reco != NULL){
+                cout<<"2"<<endl;
+            if (reco->categoria == articulo.categoria){
+            cout<<"Ingreso al if"<<endl;
+            lisaux = reco->lista;     
+            }
+            reco = reco->siguiente;
+        } 
+        lisaux->insertarNodo(articulo);
         }
         else{
-            
+            cout<<"false"<<endl;
             Lista *lis = new Lista();
             Nodo *reco = raiz;
             while (reco->siguiente != NULL){
@@ -150,6 +144,7 @@ void Lista::insertar(Articulo articulo) {
             reco->siguiente = nuevo;
             nuevo->lista = lis;
             nuevo->categoria = articulo.categoria;
+            lis->insertarNodo(articulo);
         }
     }
 }
@@ -167,7 +162,7 @@ void Lista::imprimir()    /// esto  quiere revisar
     if (!vacia()) {
         Nodo *reco = raiz;
         do {
-            cout<<reco->categoria<<endl;
+            cout<<reco->articulo.nombre<<endl;
             reco = reco->siguiente;
         } while (reco->siguiente != raiz);
         
@@ -426,7 +421,7 @@ Lista *l_articulos = new Lista();
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
     menu();
     return 0;
 
@@ -496,8 +491,9 @@ void carga(){
         a.src = to[j]["src"].asString();
         l_articulos->insertar(a);
         cout<<"se ingreso objeto: "<<a.categoria<<endl;
-    }
-    l_usuarios->imprimir();
+    } 
+
+    cin>>t;
   
   }
 
