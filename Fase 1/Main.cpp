@@ -183,8 +183,62 @@ class ListaCircular{
         void insertarNodo(Usuario x);
         bool vacia();
         void imprimir();
+        bool buscar(string nombre);
+        void eliminar(Usuario usuario);
+        Usuario obtener(string nick, string pass);
+
+        
     
 };
+
+void ListaCircular::eliminar(Usuario.usuario){
+    
+}
+
+
+Usuario ListaCircular::obtener(string nick, string pass){
+    Nodo *reco;
+    Usuario regreso;
+    reco = raiz;
+    bool bandera=false;
+     do{
+        if (reco->dato.nick == nick){
+            if (reco->dato.password == SHA256::cifrar(pass)){
+                cout<<"pasao"<<endl;
+                return reco->dato;
+              
+            }
+            else{
+                bandera = true;
+                cout<<"contraseña incorrecta"<<endl;
+           }
+        }
+        reco = reco->siguiente;
+        }while (reco != raiz);
+        if (bandera == false){
+        cout<<"Usuario no registrado"<<endl;
+        }
+        regreso.nick = "no";
+        return regreso;
+
+
+}
+
+bool ListaCircular::buscar(string nombre){
+    if(raiz == NULL){
+        return false;
+    }
+    else{
+        Nodo *reco = raiz;
+        do{
+            if (reco->dato.nick == nombre){
+                return true;
+            }
+            reco = reco->siguiente;
+        }while (reco != raiz);
+        return false;
+    }
+}
 
 ListaCircular::ListaCircular(){
     raiz = NULL;
@@ -407,11 +461,14 @@ void carga();
 
 void limpiar();
 
+void editar();
+
 void registrar();
 //HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
 
 void menu();
 
+void login();
 //variables globales
 ListaCircular *l_usuarios = new ListaCircular();
 Lista *l_articulos = new Lista(); 
@@ -502,14 +559,22 @@ void carga(){
 
 }
 
-
 void registrar(){
     
     
     string nombre,pass,edad,t;
+    bool verificar = true;
+    while(verificar == true){
     cout<<"Ingrese nombre de usuario: ";
     cin>>ws;
     getline(cin,nombre);
+    verificar = l_usuarios->buscar(nombre);
+    if(verificar == true){
+        cout<<"Nombre de usuario ya en uso ingrese uno nuevo: "<<endl;
+        cin>>t;
+        limpiar();
+    }
+    }
     cout<<"Ingrese su contraseña: ";
     cin>>ws;
     getline(cin,pass);
@@ -528,6 +593,74 @@ void registrar(){
     cin>>t;
 
 
+}
+
+void login(){
+    Usuario pa;
+    string nombre,pass,t;
+        do{
+        cout<<"Ingrese nombre de usuario: ";
+        cin>>ws;
+        getline(cin,nombre);
+        cout<<"Ingrese su contraseña: ";
+        cin>>ws;
+        getline(cin,pass);
+        pa = l_usuarios->obtener(nombre,pass);
+        }while(pa.nick == "no");
+
+    limpiar();
+
+
+    int opcion=0;
+    //color(hConsole, 10);
+    bool salir = false;
+    while(salir == false){
+    cout<<"Usuario: "<<pa.nick<<endl;
+    cout<<endl;
+    cout<<"              Login              "<<endl;
+    cout<<"********************************"<<endl;
+    cout<<"*  1. Editar informacion       *"<<endl;
+    cout<<"*  2. Eliminar cuenta          *"<<endl;
+    cout<<"*  3. Ver tutorial             *"<<endl;
+    cout<<"*  4. Ver articulos de tienda  *"<<endl;
+    cout<<"*  5. Reaizar movimientos      *"<<endl;
+    cout<<"*  6. Regresar a menu          *"<<endl;
+    cout<<"********************************"<<endl;
+    cout<<"  Ingrese una opcion: ";
+    cin>>opcion;
+    switch(opcion) {
+        case 1:
+            editar();
+            limpiar();
+        break;
+        case 2:
+            l_usuarios.
+          
+        break;
+        case 3:
+          
+        break;
+        case 4:
+            
+        break;
+        case 5:
+            limpiar();
+           
+            
+        break;
+        case 6:
+          
+            salir = true;
+            limpiar();
+            menu();
+        break;
+        default:
+        //color(hConsole,14);
+        cout<<"Por favor ingrese una opcion valida"<<endl;
+        string t;
+        cin>>t;       
+    }
+    }
 }
 
 void menu(){
@@ -555,7 +688,9 @@ void menu(){
             menu();
         break;
         case 3:
-            cout<<"opcion2"<<endl;
+            login();
+            limpiar();
+            menu();
         break;
         case 4:
             cout<<"opcion2"<<endl;
