@@ -1099,7 +1099,7 @@ void login(){
 }
 
 void reporte(){
-   
+    system("dot lista.dot -o grafi.png");
     string t;
     cout<<"Lista de Usuarios:"<<endl;
     l_usuarios->ordenar();
