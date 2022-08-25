@@ -34,6 +34,7 @@ struct Movimiento{
 };
 ///////////////////////////////////////////////////////////////////// EMPIEZA LISTA ////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Lista{
     private:
         class Nodo{
@@ -43,6 +44,7 @@ class Lista{
                 Lista *lista;
                 string categoria;
                 Usuario us;
+              
         };
         Nodo *raiz;
        
@@ -54,12 +56,153 @@ class Lista{
         bool vacia();
         void insertarUsuario(Usuario us);
         void ordenar();
+        void ordenarArticulos();
         void imprimir(); 
 };
 
+
 void Lista::ordenar(){
     cout<<"Usuarios ordenados por edad ascendentes"<<endl;
+    Nodo *actual, *siguiente, *reco;
+    actual = raiz;
+    reco = raiz;
+    Usuario t;
+    int r;
+   
+    //ordenamiento burbuja ascendente
+    while(actual->siguiente != NULL)
+     {
+          siguiente = actual->siguiente;
+          
+          while(siguiente!=NULL)
+          {
+               if(stoi(actual->us.edad) > stoi(siguiente->us.edad))
+               {
+                    t = siguiente->us;
+                    siguiente->us = actual->us;
+                    actual->us = t;          
+               }
+               siguiente = siguiente->siguiente;                    
+          }    
+          actual = actual->siguiente;
+          siguiente = actual->siguiente;
+           
+     }
+     while(reco != NULL){
+        cout<<"edad:"<<reco->us.edad<<"   usuario: "<<reco->us.nick<<endl;    
+        reco = reco->siguiente;
+     }cout<<endl;
+    //ordenamiento burbuja descendente
+     cout<<"Usuarios ordenados por edad descendentes"<<endl;
+
+     actual = raiz;
     
+      while(actual->siguiente != NULL)
+     {
+          siguiente = actual->siguiente;
+          
+          while(siguiente!=NULL)
+          {
+               if(stoi(actual->us.edad) < stoi(siguiente->us.edad))
+               {
+                    t = siguiente->us;
+                    siguiente->us = actual->us;
+                    actual->us = t;          
+               }
+               siguiente = siguiente->siguiente;                    
+          }    
+          actual = actual->siguiente;
+          siguiente = actual->siguiente;
+           
+     }
+     reco = raiz;
+     while(reco != NULL){
+        cout<<"edad:"<<reco->us.edad<<"   usuario: "<<reco->us.nick<<endl;    
+        reco = reco->siguiente;  
+     }
+}
+
+void Lista::ordenarArticulos(){
+    Lista *listaSimple = new Lista();
+    if (!vacia()) {
+        Nodo *reco = raiz;
+        do {
+            Nodo *aux = reco->lista->raiz;
+            
+            while(aux != NULL ){//AQUI VA A RECOGER TODOS LOS ELEMENTOS DE LA LISTA DE ARTICULOS Y LO COLOCARA EN UNA SIMPLE
+                listaSimple->insertarNodo(aux->articulo);
+                aux = aux->siguiente;
+            }
+            reco = reco->siguiente;
+        } while (reco->siguiente != NULL);
+    }
+    else{
+        cout<<"No existen elementos en la lista"<<endl;
+       
+    }
+   //ahora teniendo todos los elementos en la lista los vamos a aordenar
+ cout<<"Articulos ordenados por precio ascendentes"<<endl;
+    Nodo *actual, *siguiente, *reco;
+    actual = listaSimple->raiz;
+    reco = listaSimple->raiz;
+    Articulo t;
+    int r;
+   
+    //ordenamiento burbuja ascendente
+    while(actual->siguiente != NULL)
+     {
+          siguiente = actual->siguiente;
+          
+          while(siguiente!=NULL)
+          {
+               if(stoi(actual->articulo.precio) > stoi(siguiente->articulo.precio))
+               {
+                    t = siguiente->articulo;
+                    siguiente->articulo = actual->articulo;
+                    actual->articulo = t;          
+               }
+               siguiente = siguiente->siguiente;                    
+          }    
+          actual = actual->siguiente;
+          siguiente = actual->siguiente;
+           
+     }
+     while(reco != NULL){
+        cout<<"Preio:   Q"<<reco->articulo.precio<<"   Articulo: "<<reco->articulo.nombre<<endl;    
+        reco = reco->siguiente;
+     }cout<<endl;
+    //ordenamiento burbuja descendente
+     cout<<"Articulos ordenados por precio descendentes"<<endl;
+
+     actual = listaSimple->raiz;
+    
+      while(actual->siguiente != NULL)
+     {
+          siguiente = actual->siguiente;
+          
+          while(siguiente!=NULL)
+          {
+               if(stoi(actual->articulo.precio) < stoi(siguiente->articulo.precio))
+               {
+                    t = siguiente->articulo;
+                    siguiente->articulo = actual->articulo;
+                    actual->articulo = t;          
+               }
+               siguiente = siguiente->siguiente;                    
+          }    
+          actual = actual->siguiente;
+          siguiente = actual->siguiente;
+           
+     }
+     reco = listaSimple->raiz;
+     while(reco != NULL){
+        cout<<"Precio:  Q"<<reco->articulo.precio<<"   Articulo: "<<reco->articulo.nombre<<endl;    
+        reco = reco->siguiente;  
+     }
+ 
+
+
+
 }
 
 void Lista::insertarUsuario(Usuario us){
@@ -67,7 +210,6 @@ void Lista::insertarUsuario(Usuario us){
     nuevo->us = us;
     if (raiz == NULL){
         raiz = nuevo;
-        nuevo->us = us;
     }
     else{
         Nodo *reco = raiz;
@@ -179,15 +321,15 @@ void Lista::imprimir()    /// esto  quiere revisar
     if (!vacia()) {
         Nodo *reco = raiz;
         int numero = 1;
-        cout<<"#     ID           CATEGORIA                         NOMBRE                              PRECIO"<<endl;
+        cout<<"#     ID                                      CATEGORIA                                       NOMBRE                              PRECIO"<<endl;
         do {
             Nodo *aux = reco->lista->raiz;
             
             while(aux != NULL ){
-                int i=13;
+                int i=40;
                 int nu=5;
                 
-                  int cat = 34;
+                  int cat = 48;
                     int nom = 36;
 
                 cout<<numero<<":";
@@ -196,10 +338,16 @@ void Lista::imprimir()    /// esto  quiere revisar
                 for(int e = 0; e<4;e++){
                     cout<<" ";
                 }}
-                else{
+                if(numero>9 and numero <100){
                     for(int e = 0; e<3;e++){
                     cout<<" ";
                 }}
+                if(numero>99){
+                     for(int e = 0; e<2;e++){
+                    cout<<" ";
+                }
+                }
+                
 
 
                 cout<<aux->articulo.id;
@@ -251,7 +399,6 @@ class ListaCircular{
         bool buscar(string nombre);
         void eliminar(Usuario usuario);
         Usuario obtener(string nick, string pass);
-        Usuario getRaiz();
         void ordenar();
 
         
@@ -259,7 +406,7 @@ class ListaCircular{
 };
 
 void ListaCircular::ordenar(){
-   
+   string t;
     Nodo *reco = raiz;
     Lista *listaSimple = new Lista();
     do{
@@ -267,29 +414,23 @@ void ListaCircular::ordenar(){
         reco = reco->siguiente;
     }while(reco != raiz);
     listaSimple->ordenar();
+    cin>>t;
 
 
   
   }
 
-string ListaCircular::getRaiz(){
-    string lista = "";
-    Nodo *reco;
-    reco = raiz;
-    int i = 1;
-    do{
-        lista = "n"<<i<<"[label="<<reco->dato.nick<<"];"
-        i = i + 1;
-        reco = reco->siguiente;
-        }while(reco != raiz);
-   
-
-    return lista;
-}
-
 void ListaCircular::eliminar(Usuario usuario){
     Nodo *reco;
     reco = raiz;
+        if (usuario.nick == raiz->dato.nick){
+
+            reco->anterior->siguiente = reco->siguiente;
+            reco->siguiente->anterior = reco->anterior;
+            raiz = reco->siguiente;
+            delete reco;
+        }
+        else{
         do{
         if (reco->dato.nick == usuario.nick){
         reco->anterior->siguiente = reco->siguiente;
@@ -299,8 +440,7 @@ void ListaCircular::eliminar(Usuario usuario){
         reco = reco->siguiente;
         }while(reco != raiz);
     
-}
-
+}}
 
 Usuario ListaCircular::obtener(string nick, string pass){
     Nodo *reco;
@@ -502,14 +642,14 @@ private:
     class Nodo {
         public:
             Nodo *abajo;
-            Movimiento *dato;
+            Movimiento dato;
        
     };
     Nodo *cima;
     public:
     Pila();
     ~Pila();
-    void push(Movimiento *mov);
+    void push(Movimiento mov);
     bool vacia();
     void imprimir();
     void pop();
@@ -517,7 +657,7 @@ private:
 
 Pila::Pila(){
     cima = NULL;
-   
+  
 }
 
 Pila::~Pila(){
@@ -534,7 +674,8 @@ Pila::~Pila(){
     }
 }
 
-void Pila::push(Movimiento *mov) {
+void Pila::push(Movimiento mov) {
+   
     Nodo *nuevo = new Nodo();
     nuevo->dato = mov;
     if (cima == NULL) {
@@ -557,7 +698,7 @@ void Pila::imprimir(){
     if (!vacia()) {
         Nodo *reco = cima;
         do {
-         //   cout<<reco->info  <<"-";     modificar
+            cout<<"x: "<<reco->dato.mov_x<<" y: "<<reco->dato.mov_y<<endl;
             reco = reco->abajo;
         } while (reco != NULL);
     }
@@ -569,6 +710,88 @@ void Pila::pop(){
 
 
 ////////////////////////////////////////////////////////////////////////// FUNCIONES /////////////////////////////////////////////////////////////////////
+
+class ListaPilas{
+    private:
+        class Nodo{
+            public: 
+                Nodo *siguiente;
+                Pila *pila;
+              
+        };
+        Nodo *raiz;
+       
+    public:
+        ListaPilas();
+        ~ListaPilas();
+        bool vacia();
+        void imprimir(); 
+        void insertarPila(Pila *pila);
+};
+
+void ListaPilas::insertarPila(Pila *pil){
+    Nodo *nuevo = new Nodo();
+    nuevo->pila = pil;
+    if (raiz == NULL){
+        raiz = nuevo;
+
+    }
+    else{
+        Nodo *reco = raiz;
+        while (reco->siguiente != NULL){
+            reco = reco->siguiente;
+        }
+        reco->siguiente = nuevo;
+        nuevo->siguiente = NULL;
+    }
+}
+
+
+
+
+ListaPilas::ListaPilas(){
+    raiz = NULL;
+}
+
+ListaPilas::~ListaPilas()     //sirve para destruir la lista circular con todos sus nodos
+{ 
+    if (raiz != NULL) {
+        Nodo *reco = raiz->siguiente;
+        Nodo *bor;
+        while (reco != raiz)
+        {
+            bor = reco;
+            reco = reco->siguiente;
+            delete bor;
+        }
+        delete raiz;
+    }
+}
+
+bool ListaPilas::vacia()
+{
+    if (raiz == NULL)
+        return true;
+    else
+        return false;
+}
+
+void ListaPilas::imprimir()    /// esto  quiere revisar
+{
+   
+}
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void carga();
 
 void limpiar();
@@ -587,6 +810,7 @@ void reporte();
 ListaCircular *l_usuarios = new ListaCircular();
 Lista *l_articulos = new Lista(); 
 Cola *c_tutorial = new Cola();
+ListaPilas *l_pila = new ListaPilas();
 
 
 
@@ -603,14 +827,7 @@ void limpiar(){
 }
 
 void carga(){
-    
-  
-    //cout<<"Ingrese nombre del archivo: "<<endl;
-    //string msg,t;
-    //cin>>ws;
-    //getline(cin,msg);
-    //msg = msg +".json";
-    fstream ofile("db_juego.json");
+    fstream ofile("f1_masiva.json");
     string strjson;
     if (!ofile.is_open()) {
         cout<<"Imposible abrir ese archivo"<<endl;
@@ -635,7 +852,7 @@ void carga(){
     for (int j = 0; j < size; j++){
         Usuario a;
         a.nick = to[j]["nick"].asString();
-        a.moneda = to[j]["moneda"].asString();
+        a.moneda = to[j]["monedas"].asString();
         a.edad = to[j]["edad"].asString();
         a.password = to[j]["password"].asString();
         l_usuarios->insertarNodo(a);
@@ -730,7 +947,7 @@ void login(){
     //color(hConsole, 10);
     bool salir = false;
     while(salir == false){
-    cout<<"Usuario: "<<pa.nick<<endl;
+    cout<<"Usuario: "<<pa.nick<<"   Tokens: "<<pa.moneda<<endl;
     cout<<endl;
     cout<<"              Login              "<<endl;
     cout<<"********************************"<<endl;
@@ -787,7 +1004,7 @@ void login(){
             cout<<"Esta seguro de eliminar su usuario? (s/n)"<<endl;
             cin>>pregunta;
             if (pregunta == 's'){
-                l_usuarios->eliminar(pa);
+                l_usuarios->eliminar(pa); //revision
                 salir = true;
                 menu();
             }}
@@ -806,8 +1023,63 @@ void login(){
             cout<<" Ingrese el articulo que desea comprar: ";
             cin>>t;}
         break;
-        case 5:{
-            limpiar();
+        case 5:{ //realizar movimientos
+            Pila *pila = new Pila();
+            int opc=0;
+            bool bandera = true;
+            int numeroPartidas = 5 + rand() % (11 - 5) ; //selecciona un numero aleatorio de jugadas para determinar el ganador
+            while(numeroPartidas != 0){
+                limpiar();
+                 cout<<"Seleccionee una opcion"<<endl;
+                cout<<"  1. Ingresar jugada:       "<<endl;
+                cout<<"  2. Detroceder jugada  "<<endl;
+                cout<<"  3. Abandonar       "<<endl;
+                cin>>opc;
+                switch (opc)
+                {
+                case 1:{
+                    string x1,y1;
+                    Movimiento mov;
+                    cout<<"Ingrese X: ";
+                    cin>>ws;
+                    getline(cin,x1);
+                    cout<<"Ingrese Y: ";
+                    cin>>ws;
+                    getline(cin,y1);
+                    mov.mov_x = x1;
+                    mov.mov_y = y1;
+                    pila->push(mov);
+                    numeroPartidas = numeroPartidas -1;}
+                break;
+                case 2:{
+                    pila->pop();
+                    numeroPartidas = numeroPartidas + 1;}
+                    break;
+                case 3:{
+                    cout<<"partida perdida"<<endl;
+                    bandera = false;
+                    l_pila->insertarPila(pila);
+                    numeroPartidas = 0;
+                break;
+                }
+                }
+            }
+            if(bandera == true){
+                cout<<"Felicidades ganas 100 tokens"<<endl;
+                l_pila->insertarPila(pila);
+                int monto = stoi(pa.moneda) + 100;
+                pa.moneda = to_string(monto);
+            }
+            //revisar
+            
+
+
+
+
+
+
+
+            
            cin>>t;
         }
         break;
@@ -827,21 +1099,19 @@ void login(){
 }
 
 void reporte(){
-    ////////imagen de listaa circular
-    string lista;
-    lista = "digraph g{ 
-	ranksep=0.5;node[shape=box, fontname="Arial"];";
-    string list = l_usuarios.get();
-
-
+   
+    string t;
     cout<<"Lista de Usuarios:"<<endl;
-    l_usuarios.ordenar();
+    l_usuarios->ordenar();
+    cout<<endl<<"Lista de Articulos "<<endl;
+    l_articulos->ordenarArticulos();
+    cin>>t;
 }
 
 
 
 
-}
+
 
 void menu(){
     int opcion=0;
