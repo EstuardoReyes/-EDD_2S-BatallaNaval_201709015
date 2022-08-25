@@ -1,55 +1,29 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <jsoncpp/json/json.h>
-
-using namespace std;
-using namespace Json;
-
-int main()
-{
-  fstream ofile("json.json");
-  string strjson;
-  if (!ofile.is_open()) {
-    return 0;
-  }
- 
-  string strline;
-  while (getline(ofile, strline)) {
-   strjson += strline;
-  }
-  
-  ofile.close();
-  
-  Json::Reader reader;  //  Reader 
-  Json::Value root;    //  The value of value can be any object
-  
-  if (reader.parse(strjson, root)) {
-  
-    int size = root.size();   //  Number of root nodes
-  
-    for (int j = 0; j < size; j++) {
-      
-      cout << root[j]["name"].asString() << endl;
- 
-      const Json::Value arrayObj = root[j]["lines"];
- 
-      for (int i = 0; i < arrayObj.size(); i++) {
- 
-        if (arrayObj[i].isMember("line")) {
-          cout << arrayObj[i]["line"].asString() << endl;
-        }
-        if (arrayObj[i].isMember("cpp")) {
-          cout << arrayObj[i]["cpp"].asString() << endl;
-        }
-        if (arrayObj[i].isMember("java")) {
-          cout << arrayObj[i]["java"].asString() << endl;
-        }
-    
-        int m = 0;
-      }
-    }
-  }
- return 0;
-}
-
+ g = Digraph('unix', filename='AP_'+gramati.nombre+'.jpg')
+        g.attr(rankdir='LR', size='8,5')
+        g.node("",shape="plaintext",witdh="0.0001",height="0.0001")
+        g.node("i",shape="circle")
+        g.node("p",shape="circle")
+        g.node("q",shape="circle",witdh="1",height="1")
+        g.node("f",shape="doublecircle")
+        g.edge("","i")
+        g.edge("i","p",label="λ,λ;#")
+        g.edge("p","q",label="λ,λ;"+gramati.inicial)
+        aux1 = ''
+        aux2 = ''
+        produ = []
+        for i in gramati.producciones:
+            aux = ''
+            t = 0
+            for e in i:
+                if t != 0:
+                    aux = aux + i[e]
+                t = t + 1
+            aux1 = aux1 + "λ,"+i["no terminal"]+";"+aux +"\\n"
+            dic = {"noterminal":i["no terminal"],"terminal":aux}
+            produ.append(dic)
+        for f in gramati.terminal:
+            aux2 = aux2 +f+","+f+";λ \\n"
+        g.edge("q","q",label=aux1)
+        g.edge("q","q",label=aux2,tailport="s",headport="sw")
+        g.edge("q","f",label="λ,#;λ")
+        g.re

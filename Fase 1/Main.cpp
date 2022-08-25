@@ -42,6 +42,7 @@ class Lista{
                 Articulo articulo;
                 Lista *lista;
                 string categoria;
+                Usuario us;
         };
         Nodo *raiz;
        
@@ -51,8 +52,34 @@ class Lista{
         void insertarNodo(Articulo articulo);
         void insertar(Articulo articulo);
         bool vacia();
+        void insertarUsuario(Usuario us);
+        void ordenar();
         void imprimir(); 
 };
+
+void Lista::ordenar(){
+    cout<<"Usuarios ordenados por edad ascendentes"<<endl;
+    
+}
+
+void Lista::insertarUsuario(Usuario us){
+    Nodo *nuevo = new Nodo();
+    nuevo->us = us;
+    if (raiz == NULL){
+        raiz = nuevo;
+        nuevo->us = us;
+    }
+    else{
+        Nodo *reco = raiz;
+       
+        while (reco->siguiente != NULL){
+            reco = reco->siguiente;
+        }
+        reco->siguiente = nuevo;
+        nuevo->siguiente = NULL;
+        nuevo->us = us;
+    }
+}
 
 Lista::Lista(){
     raiz = NULL;
@@ -151,12 +178,50 @@ void Lista::imprimir()    /// esto  quiere revisar
 {
     if (!vacia()) {
         Nodo *reco = raiz;
+        int numero = 1;
+        cout<<"#     ID           CATEGORIA                         NOMBRE                              PRECIO"<<endl;
         do {
-            cout<<endl;
-            cout<<"Categoria: "<<reco->categoria<<endl;
             Nodo *aux = reco->lista->raiz;
+            
             while(aux != NULL ){
-                cout<<aux->articulo.id<<" "<<aux->articulo.categoria<<" "<<aux->articulo.nombre<<" "<<aux->articulo.precio<<" "<<aux->articulo.src<<endl;
+                int i=13;
+                int nu=5;
+                
+                  int cat = 34;
+                    int nom = 36;
+
+                cout<<numero<<":";
+               
+                if(numero <10){
+                for(int e = 0; e<4;e++){
+                    cout<<" ";
+                }}
+                else{
+                    for(int e = 0; e<3;e++){
+                    cout<<" ";
+                }}
+
+
+                cout<<aux->articulo.id;
+                i = i - aux->articulo.id.length();
+                for(int e = 0; e<i;e++){
+                    cout<<" ";
+                }
+                cout<<aux->articulo.categoria;
+                cat = cat - aux->articulo.categoria.length();
+                for(int e = 0; e<cat;e++){
+                    cout<<" ";
+                }
+                cout<<aux->articulo.nombre;
+                nom = nom - aux->articulo.nombre.length();
+                for(int e = 0; e<nom;e++){
+                    cout<<" ";
+                }
+                cout<<"Q."<<aux->articulo.precio<<endl;
+                
+                
+                
+                numero = numero + 1;
                 aux = aux->siguiente;
             }
             reco = reco->siguiente;
@@ -186,12 +251,53 @@ class ListaCircular{
         bool buscar(string nombre);
         void eliminar(Usuario usuario);
         Usuario obtener(string nick, string pass);
+        Usuario getRaiz();
+        void ordenar();
 
         
     
 };
 
-void ListaCircular::eliminar(Usuario.usuario){
+void ListaCircular::ordenar(){
+   
+    Nodo *reco = raiz;
+    Lista *listaSimple = new Lista();
+    do{
+        listaSimple->insertarUsuario(reco->dato);
+        reco = reco->siguiente;
+    }while(reco != raiz);
+    listaSimple->ordenar();
+
+
+  
+  }
+
+string ListaCircular::getRaiz(){
+    string lista = "";
+    Nodo *reco;
+    reco = raiz;
+    int i = 1;
+    do{
+        lista = "n"<<i<<"[label="<<reco->dato.nick<<"];"
+        i = i + 1;
+        reco = reco->siguiente;
+        }while(reco != raiz);
+   
+
+    return lista;
+}
+
+void ListaCircular::eliminar(Usuario usuario){
+    Nodo *reco;
+    reco = raiz;
+        do{
+        if (reco->dato.nick == usuario.nick){
+        reco->anterior->siguiente = reco->siguiente;
+        reco->siguiente->anterior = reco->anterior;
+        delete reco;
+        break;}
+        reco = reco->siguiente;
+        }while(reco != raiz);
     
 }
 
@@ -325,7 +431,12 @@ private:
         bool vacia();
         void imprimir();
         void descolar();
+        Movimiento getRaiz();
 };
+
+Movimiento Cola::getRaiz(){
+    return raiz->mov;
+}
 
 Cola::Cola(){
     raiz = NULL;
@@ -370,10 +481,11 @@ bool Cola::vacia(){
 void Cola::imprimir(){
     if (!vacia()) {
         Nodo *reco = raiz;
-        cout<<"Ancho: "<<raiz->mov.ancho<<endl;
-        cout<<"Alto: "<<raiz->mov.alto<<endl;
+        cout<<"    Ancho: "<<raiz->mov.ancho<<endl;
+        cout<<"    Alto: "<<raiz->mov.alto<<endl;
+        cout<<"    Movimientos:"<<endl;
         do {
-            cout<<"x: "<<reco->mov.mov_x<<" y: "<<reco->mov.mov_y<<endl;
+            cout<<"              x:"<<reco->mov.mov_x<<" y:"<<reco->mov.mov_y<<endl;
             reco = reco->sig;
         } while (reco != NULL);
     }
@@ -469,6 +581,8 @@ void registrar();
 void menu();
 
 void login();
+
+void reporte();
 //variables globales
 ListaCircular *l_usuarios = new ListaCircular();
 Lista *l_articulos = new Lista(); 
@@ -599,6 +713,7 @@ void login(){
     Usuario pa;
     string nombre,pass,t;
         do{
+        limpiar();
         cout<<"Ingrese nombre de usuario: ";
         cin>>ws;
         getline(cin,nombre);
@@ -629,38 +744,103 @@ void login(){
     cout<<"  Ingrese una opcion: ";
     cin>>opcion;
     switch(opcion) {
-        case 1:
-            editar();
+        case 1:{
+            cout<<"Seleccione la informacion que desea editar"<<endl;
+            cout<<"  1. Nick:       "<<endl;
+            cout<<"  2. Contraseña  "<<endl;
+            cout<<"  3. edad:       "<<endl;
+            cin>>opcion;
+            switch(opcion){
+                case 1:
+                 do{
+                    cout<<"Ingrese nombre de usuario: ";
+                    cin>>ws;
+                    getline(cin,nombre);
+                    pa = l_usuarios->obtener(nombre,pass);
+                 }while(pa.nick != "no");
+                pa.nick = nombre;
+                cout<<"cambio efectuado correctamente"<<endl;
+                cin>>t;
+                break;
+                case 2:
+                    cout<<"Ingrese su nueva contraseña: ";
+                    cin>>ws;
+                    getline(cin,pass);
+                    pa.password= SHA256::cifrar(pass);
+                    cout<<"cambio efectuado correctamente"<<endl;
+                    cin>>t;
+                break;
+                case 3:
+                    string edad;
+                    cout<<"Ingrese su nueva edad: ";
+                    cin>>ws;
+                    getline(cin,edad);
+                    pa.edad = edad;
+                    cout<<"cambio efectuado correctamente"<<endl;
+                break;
+            }
+            limpiar();}
+        break;
+        case 2://aqui es para eliminar el usuario
+            {char pregunta;
             limpiar();
+            cout<<"Esta seguro de eliminar su usuario? (s/n)"<<endl;
+            cin>>pregunta;
+            if (pregunta == 's'){
+                l_usuarios->eliminar(pa);
+                salir = true;
+                menu();
+            }}
         break;
-        case 2:
-            l_usuarios.
-          
-        break;
-        case 3:
-          
-        break;
-        case 4:
-            
-        break;
-        case 5:
+        case 3:{
             limpiar();
-           
-            
+            Movimiento aux;
+            aux = c_tutorial->getRaiz();
+            cout<<"Tutorial:"<<endl<<endl<<endl;
+            cout<<"   Tablero:"<<endl;
+            c_tutorial->imprimir();
+            cin>>t;}
+        break;
+        case 4:{
+            l_articulos->imprimir();
+            cout<<" Ingrese el articulo que desea comprar: ";
+            cin>>t;}
+        break;
+        case 5:{
+            limpiar();
+           cin>>t;
+        }
         break;
         case 6:
-          
+          {
             salir = true;
             limpiar();
-            menu();
+            menu();}
         break;
         default:
-        //color(hConsole,14);
-        cout<<"Por favor ingrese una opcion valida"<<endl;
+        cout<<"Por favor ingrese una opcion valida: ";
         string t;
-        cin>>t;       
+        cin>>t;   
+          
     }
     }
+}
+
+void reporte(){
+    ////////imagen de listaa circular
+    string lista;
+    lista = "digraph g{ 
+	ranksep=0.5;node[shape=box, fontname="Arial"];";
+    string list = l_usuarios.get();
+
+
+    cout<<"Lista de Usuarios:"<<endl;
+    l_usuarios.ordenar();
+}
+
+
+
+
 }
 
 void menu(){
@@ -693,7 +873,9 @@ void menu(){
             menu();
         break;
         case 4:
-            cout<<"opcion2"<<endl;
+            reporte();
+            limpiar();
+            menu();
         break;
         case 5:
             //color(hConsole,9);

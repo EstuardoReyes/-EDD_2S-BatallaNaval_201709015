@@ -1,0 +1,14 @@
+digraph g{ 
+	ranksep=0.5; 
+	node[shape=box, fontname="Arial"]; 
+	n1[label="Incident Commander"]; 
+	n2[label="Public Information\nOfficer"]; 
+	n3[label="Public Information\nOfficer"]; 
+	n1->n2;
+	n2->n3;
+	n3->n1;
+	n1 -> n3;
+	n3 -> n2;
+	n2 -> n1;
+	}
+
