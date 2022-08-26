@@ -499,6 +499,9 @@ Usuario ListaCircular::obtener(string nick, string pass){
             else{
                 bandera = true;
                 cout<<"contraseña incorrecta"<<endl;
+                cout<<"Presione cualquier tecla seguido de ENTER para continuar: ";
+                string t;
+                cin>>t;
            }
         }
         reco = reco->siguiente;
@@ -1026,17 +1029,17 @@ void login(){
                     cin>>ws;
                     getline(cin,nombre);
                     verificara = l_usuarios->buscar(nombre);
-                    if(verificar == true){
+                    if(verificara == true){
                     cout<<"Nombre de usuario ya en uso ingrese uno nuevo: "<<endl;
                     cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
                     cin>>t;
                     limpiar();
                     }              
-                 }while(verificara == false);
+                 }while(verificara == true);
                 l_usuarios->cambiarNombre(nombre,pa.nick);
                 cout<<"cambio efectuado correctamente"<<endl;
                 cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
-                cin>>t;
+                cin>>t;}
                 break;
                 case 2:{
                     cout<<"Ingrese su nueva contraseña: ";
@@ -1055,7 +1058,7 @@ void login(){
                     l_usuarios->cambiarEdad(edad,pa.nick);
                     cout<<"cambio efectuado correctamente"<<endl;}
                 break;
-            }
+            
             limpiar();}
         }
         break;
