@@ -399,11 +399,52 @@ class ListaCircular{
         bool buscar(string nombre);
         void eliminar(Usuario usuario);
         Usuario obtener(string nick, string pass);
+        void cambiarNombre(string nuevoNombre, string viejoNombre);
+        void cambiarEdad(string nuevaEdad, string viejaNombre);
+        void cambiarContra(string nuevaContra, string viejaContra);
         void ordenar();
 
         
     
 };
+
+void ListaCircular::cambiarNombre(string nuevoNombre, string viejoNombre){
+    Nodo *reco;
+    reco = raiz;
+    do{
+        if(reco->dato.nick == viejoNombre){
+            reco->dato.nick = nuevoNombre;
+        }
+        reco = reco->siguiente;
+    }while(reco != raiz);
+   
+}
+
+void ListaCircular::cambiarEdad(string nuevoEdad, string viejoNombre){
+    Nodo *reco;
+    reco = raiz;
+    do{
+        if(reco->dato.nick == viejoNombre){
+            reco->dato.edad = nuevoEdad;
+        }
+        reco = reco->siguiente;
+    }while(reco != raiz);
+   
+}
+
+void ListaCircular::cambiarContra(string nuevoEdad, string viejoNombre){
+    Nodo *reco;
+    reco = raiz;
+    do{
+        if(reco->dato.nick == viejoNombre){
+            reco->dato.password = SHA256::cifrar(nuevoEdad);
+        }
+        reco = reco->siguiente;
+    }while(reco != raiz);
+   
+}
+
+
 
 void ListaCircular::ordenar(){
    string t;
@@ -414,6 +455,7 @@ void ListaCircular::ordenar(){
         reco = reco->siguiente;
     }while(reco != raiz);
     listaSimple->ordenar();
+    cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
     cin>>t;
 
 
@@ -450,7 +492,7 @@ Usuario ListaCircular::obtener(string nick, string pass){
      do{
         if (reco->dato.nick == nick){
             if (reco->dato.password == SHA256::cifrar(pass)){
-                cout<<"pasao"<<endl;
+             
                 return reco->dato;
               
             }
@@ -462,7 +504,7 @@ Usuario ListaCircular::obtener(string nick, string pass){
         reco = reco->siguiente;
         }while (reco != raiz);
         if (bandera == false){
-        cout<<"Usuario no registrado"<<endl;
+   
         }
         regreso.nick = "no";
         return regreso;
@@ -549,6 +591,7 @@ void ListaCircular::imprimir()
     else{
         cout<<"No existen elementos en la lista"<<endl;
         string t;
+        cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
         cin>>t;
     }
 }
@@ -831,6 +874,8 @@ void carga(){
     string strjson;
     if (!ofile.is_open()) {
         cout<<"Imposible abrir ese archivo"<<endl;
+        cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
+
         string t;
         cin>>t;
     }
@@ -902,6 +947,7 @@ void registrar(){
     verificar = l_usuarios->buscar(nombre);
     if(verificar == true){
         cout<<"Nombre de usuario ya en uso ingrese uno nuevo: "<<endl;
+        cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
         cin>>t;
         limpiar();
     }
@@ -920,7 +966,7 @@ void registrar(){
     us.nick = nombre;
     us.edad = edad;
     l_usuarios->insertarNodo(us);
-    l_usuarios->imprimir();
+    cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
     cin>>t;
 
 
@@ -938,6 +984,7 @@ void login(){
         cin>>ws;
         getline(cin,pass);
         pa = l_usuarios->obtener(nombre,pass);
+        
         }while(pa.nick == "no");
 
     limpiar();
@@ -947,6 +994,7 @@ void login(){
     //color(hConsole, 10);
     bool salir = false;
     while(salir == false){
+    pa = l_usuarios->obtener(nombre,pass);
     cout<<"Usuario: "<<pa.nick<<"   Tokens: "<<pa.moneda<<endl;
     cout<<endl;
     cout<<"              Login              "<<endl;
@@ -969,34 +1017,47 @@ void login(){
             cin>>opcion;
             switch(opcion){
                 case 1:
+                {
+
+
+                bool verificara = true;
                  do{
                     cout<<"Ingrese nombre de usuario: ";
                     cin>>ws;
                     getline(cin,nombre);
-                    pa = l_usuarios->obtener(nombre,pass);
-                 }while(pa.nick != "no");
-                pa.nick = nombre;
+                    verificara = l_usuarios->buscar(nombre);
+                    if(verificar == true){
+                    cout<<"Nombre de usuario ya en uso ingrese uno nuevo: "<<endl;
+                    cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
+                    cin>>t;
+                    limpiar();
+                    }              
+                 }while(verificara == false);
+                l_usuarios->cambiarNombre(nombre,pa.nick);
                 cout<<"cambio efectuado correctamente"<<endl;
+                cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
                 cin>>t;
                 break;
-                case 2:
+                case 2:{
                     cout<<"Ingrese su nueva contraseña: ";
                     cin>>ws;
                     getline(cin,pass);
-                    pa.password= SHA256::cifrar(pass);
+                    l_usuarios->cambiarContra(pass,pa.nick);
                     cout<<"cambio efectuado correctamente"<<endl;
-                    cin>>t;
+                    cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
+                    cin>>t;}
                 break;
-                case 3:
+                case 3:{
                     string edad;
                     cout<<"Ingrese su nueva edad: ";
                     cin>>ws;
                     getline(cin,edad);
-                    pa.edad = edad;
-                    cout<<"cambio efectuado correctamente"<<endl;
+                    l_usuarios->cambiarEdad(edad,pa.nick);
+                    cout<<"cambio efectuado correctamente"<<endl;}
                 break;
             }
             limpiar();}
+        }
         break;
         case 2://aqui es para eliminar el usuario
             {char pregunta;
@@ -1016,6 +1077,7 @@ void login(){
             cout<<"Tutorial:"<<endl<<endl<<endl;
             cout<<"   Tablero:"<<endl;
             c_tutorial->imprimir();
+            cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
             cin>>t;}
         break;
         case 4:{
@@ -1079,8 +1141,9 @@ void login(){
 
 
 
-            
+           cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl ;
            cin>>t;
+           
         }
         break;
         case 6:
@@ -1092,6 +1155,7 @@ void login(){
         default:
         cout<<"Por favor ingrese una opcion valida: ";
         string t;
+        cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
         cin>>t;   
           
     }
@@ -1105,6 +1169,7 @@ void reporte(){
     l_usuarios->ordenar();
     cout<<endl<<"Lista de Articulos "<<endl;
     l_articulos->ordenarArticulos();
+    cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
     cin>>t;
 }
 
@@ -1155,6 +1220,7 @@ void menu(){
         default:
         //color(hConsole,14);
         cout<<"Por favor ingrese una opcion valida"<<endl;
+        cout<<"Presione cualquier tecla seguido de ENTER para continuar"<<endl;
         string t;
         cin>>t;       
         limpiar();
